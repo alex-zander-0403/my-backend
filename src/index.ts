@@ -4,7 +4,7 @@ const port = 3000;
 
 //
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send("Hello, main page1223!");
 });
 
 app.post("/", (req, res) => {
