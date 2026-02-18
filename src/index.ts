@@ -3,9 +3,9 @@ const app = express();
 const port = 3000;
 
 const myUsers = [
-  { id: 1, name: "Alex", hasCar: true },
-  { id: 2, name: "Bob", hasCar: false },
-  { id: 3, name: "Carl", hasCar: true },
+  { id: 1, name: "Alex", age: 33, hasCar: true },
+  { id: 2, name: "Bob", age: 45, hasCar: false },
+  { id: 3, name: "Carl", age: 23, hasCar: true },
 ];
 
 //
@@ -13,8 +13,16 @@ app.get("/", (req, res) => {
   res.send("Hello, main page!!!");
 });
 
+// GET /users?age=30
 app.get("/users", (req, res) => {
-  res.json(myUsers);
+  // const { age } = req.query;
+  let foundedUsers = myUsers;
+
+  if (req.query.age) {
+    foundedUsers = myUsers.filter((user) => user.age >= req.query.age);
+  }
+
+  res.json(foundedUsers);
 });
 
 app.get("/users/:id", (req, res) => {
