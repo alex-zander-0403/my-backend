@@ -10,6 +10,15 @@ let dbUsers = [
   { id: 3, name: "Carl", age: 23, hasCar: true },
 ];
 
+const HTTP_STATUS = {
+  OK_200: 200,
+  CREATED_201: 201,
+  NO_CONTENT_204: 204,
+
+  BAD_REQUEST_400: 400,
+  NOT_FOUND_404: 404,
+};
+
 // =========={ GET }==========
 
 app.get("/", (req, res) => {
@@ -32,7 +41,7 @@ app.get("/users/:id", (req, res) => {
   const foundedUser = dbUsers.find((user) => user.id === Number(req.params.id));
 
   if (!foundedUser) {
-    res.status(404).send("Страница не найдена!");
+    res.status(HTTP_STATUS.NOT_FOUND_404).send("Страница не найдена!");
     return;
   }
 
@@ -59,7 +68,7 @@ app.post("/users", (req, res) => {
   };
 
   dbUsers.push(newUser);
-  res.status(201).json(newUser);
+  res.status(HTTP_STATUS.CREATED_201).json(newUser);
 });
 
 // =========={ DELETE }==========
@@ -72,7 +81,7 @@ app.post("/users", (req, res) => {
 app.delete("/users/:id", (req, res) => {
   dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
 
-  res.sendStatus(204);
+  res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
 
 // =========={ UPDATE }==========
@@ -85,13 +94,14 @@ app.delete("/users/:id", (req, res) => {
 //     .then((data) => console.log(data))
 
 app.put("/users/:id", (req, res) => {
-
   // поиск user для редактирования
   let userForUpdate = dbUsers.find((user) => user.id === Number(req.params.id));
 
   // проверка на наличие user
   if (!userForUpdate) {
-    res.status(404).send("Пользователь для редактирования не найден!");
+    res
+      .status(HTTP_STATUS.NOT_FOUND_404)
+      .send("Пользователь для редактирования не найден!");
     return;
   }
 
@@ -100,7 +110,7 @@ app.put("/users/:id", (req, res) => {
   userForUpdate.age = req.body.age;
   userForUpdate.hasCar = req.body.hasCar;
 
-  res.status(200).json(userForUpdate);
+  res.status(HTTP_STATUS.OK_200).json(userForUpdate);
 });
 
 //
