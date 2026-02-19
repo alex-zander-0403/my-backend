@@ -4,13 +4,14 @@ const port = 3000;
 
 app.use(express.json());
 
-let myUsers = [
+let dbUsers = [
   { id: 1, name: "Alex", age: 33, hasCar: true },
   { id: 2, name: "Bob", age: 45, hasCar: false },
   { id: 3, name: "Carl", age: 23, hasCar: true },
 ];
 
-// ===== GET =====
+// =========={ GET }==========
+
 app.get("/", (req, res) => {
   res.send("Hello, main page!!!");
 });
@@ -18,17 +19,17 @@ app.get("/", (req, res) => {
 // GET /users?age=30
 app.get("/users", (req, res) => {
   // const { age } = req.query;
-  let foundedUsers = myUsers;
+  let foundedUsers = dbUsers;
 
   if (req.query.age) {
-    foundedUsers = myUsers.filter((user) => user.age >= req.query.age);
+    foundedUsers = dbUsers.filter((user) => user.age >= req.query.age);
   }
 
   res.json(foundedUsers);
 });
 
 app.get("/users/:id", (req, res) => {
-  const foundedUser = myUsers.find((user) => user.id === Number(req.params.id));
+  const foundedUser = dbUsers.find((user) => user.id === Number(req.params.id));
 
   if (!foundedUser) {
     res.status(404).send("Страница не найдена!");
@@ -38,7 +39,8 @@ app.get("/users/:id", (req, res) => {
   res.json(foundedUser);
 });
 
-// ===== POST =====
+// =========={ POST }==========
+
 // fetch('http://localhost:3000/users', {
 //     method: "POST",
 //     headers: {'content-type': 'application/json'},
@@ -56,21 +58,49 @@ app.post("/users", (req, res) => {
     hasCar: req.body.hasCar,
   };
 
-  myUsers.push(newUser);
+  dbUsers.push(newUser);
   res.status(201).json(newUser);
 });
 
-// ===== DELETE =====
+// =========={ DELETE }==========
+
 // fetch('http://localhost:3000/users/1', {
 //     method: "DELETE"})
-
 //     .then((res) => res.json())
 //     .then((data) => console.log(data))
 
 app.delete("/users/:id", (req, res) => {
-  myUsers = myUsers.filter((user) => user.id !== Number(req.params.id));
+  dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
 
-  res.status(204);
+  res.sendStatus(204);
+});
+
+// =========={ UPDATE }==========
+
+// fetch('http://localhost:3000/users/1', {
+//     method: "PUT",
+//     headers: {'content-type': 'application/json'},
+//     body: JSON.stringify({ name: "David", age: 100, hasCar: true}) })
+//     .then((res) => res.json())
+//     .then((data) => console.log(data))
+
+app.put("/users/:id", (req, res) => {
+
+  // поиск user для редактирования
+  let userForUpdate = dbUsers.find((user) => user.id === Number(req.params.id));
+
+  // проверка на наличие user
+  if (!userForUpdate) {
+    res.status(404).send("Пользователь для редактирования не найден!");
+    return;
+  }
+
+  // update
+  userForUpdate.name = req.body.name;
+  userForUpdate.age = req.body.age;
+  userForUpdate.hasCar = req.body.hasCar;
+
+  res.status(200).json(userForUpdate);
 });
 
 //
