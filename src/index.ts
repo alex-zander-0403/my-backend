@@ -1,11 +1,11 @@
-const express = require("express");
+import express, { type Request, type Response } from "express";
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
 let dbUsers = [
-  { id: 1, name: "Alex", age: 33, hasCar: true },
+  { id: 1, name: "Alex", age: 43, hasCar: true },
   { id: 2, name: "Bob", age: 45, hasCar: false },
   { id: 3, name: "Carl", age: 23, hasCar: true },
 ];
@@ -21,7 +21,7 @@ const HTTP_STATUS = {
 
 // =========={ GET }==========
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Hello, main page!!!");
 });
 
