@@ -31,7 +31,7 @@ app.get("/users", (req, res) => {
   let foundedUsers = dbUsers;
 
   if (req.query.age) {
-    foundedUsers = dbUsers.filter((user) => user.age >= req.query.age);
+    foundedUsers = dbUsers.filter((user) => user.age >= Number(req.query.age));
   }
 
   res.json(foundedUsers);
