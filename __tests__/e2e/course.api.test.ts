@@ -1,7 +1,8 @@
-// import request from "supertest";
+import request from "supertest";
+import { app } from "../../src";
 
 describe("/users", () => {
   it("should return 200 and empty array", () => {
-    expect(1).toBe(1);
+    request(app).get("/users").expect([]);
   });
 });
