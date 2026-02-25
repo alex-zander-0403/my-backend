@@ -61,11 +61,16 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res) => {
   // const { name, age, hasCar } = req.body;
 
+  if (!req.body.name) {
+    res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
+    return;
+  }
+
   const newUser = {
     id: Number(new Date()),
     name: req.body.name,
-    age: req.body.age,
-    hasCar: req.body.hasCar,
+    age: req.body.age || 0,
+    hasCar: req.body.hasCar || false,
   };
 
   dbUsers.push(newUser);
@@ -112,6 +117,12 @@ app.put("/users/:id", (req, res) => {
   userForUpdate.hasCar = req.body.hasCar;
 
   res.status(HTTP_STATUS.OK_200).json(userForUpdate);
+});
+
+// endpoint for tests
+app.delete("/__test__/data", (req, res) => {
+  dbUsers = [];
+  res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
 
 //
