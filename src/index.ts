@@ -1,4 +1,14 @@
 import express, { type Request, type Response } from "express";
+import type {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+  RequestWithQuery,
+} from "./types/endpointTypes.js";
+import type { CreateUserModel } from "./models/CreateUserModel.js";
+import type { UpdateUserModel } from "./models/UpdateUserModel.js";
+import type { QueryUserModel } from "./models/QueryUserModel.js";
+import type { UserApiModel } from "./models/UserApiModel.js";
 
 export const app = express();
 const port = 3000;
@@ -38,7 +48,7 @@ app.get("/", (req: Request, res: Response) => {
 // GET /users?name=alex
 app.get(
   "/users",
-  (req: Request<{}, {}, {}, { name: string }>, res: Response<UserType[]>) => {
+  (req: RequestWithQuery<QueryUserModel>, res: Response<UserApiModel[]>) => {
     // const { name } = req.query;
     let foundedUsers = dbUsers;
 
@@ -55,7 +65,7 @@ app.get(
 
 app.get(
   "/users/:id",
-  (req: Request<{ id: string }>, res: Response<UserType>) => {
+  (req: RequestWithParams<{ id: string }>, res: Response<UserApiModel>) => {
     const foundedUser = dbUsers.find(
       (user) => user.id === Number(req.params.id),
     );
@@ -80,10 +90,7 @@ app.get(
 
 app.post(
   "/users",
-  (
-    req: Request<{}, {}, { name: string; age?: number; hasCar?: boolean }>,
-    res: Response<UserType>,
-  ) => {
+  (req: RequestWithBody<CreateUserModel>, res: Response<UserApiModel>) => {
     // const { name, age, hasCar } = req.body;
 
     if (!req.body.name) {
@@ -110,11 +117,14 @@ app.post(
 //     .then((res) => res.json())
 //     .then((data) => console.log(data))
 
-app.delete("/users/:id", (req: Request<{ id: string }>, res: Response) => {
-  dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
+app.delete(
+  "/users/:id",
+  (req: RequestWithParams<{ id: string }>, res: Response) => {
+    dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
 
-  res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
-});
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+  },
+);
 
 // =========={ UPDATE }==========
 
@@ -128,11 +138,7 @@ app.delete("/users/:id", (req: Request<{ id: string }>, res: Response) => {
 app.put(
   "/users/:id",
   (
-    req: Request<
-      { id: string },
-      {},
-      { name: string; age?: number; hasCar?: boolean }
-    >,
+    req: RequestWithParamsAndBody<{ id: string }, UpdateUserModel>,
     res: Response,
   ) => {
     // поиск user для редактирования
@@ -158,7 +164,7 @@ app.put(
 );
 
 // endpoint for tests
-app.delete("/__test__/data", (req, res) => {
+app.delete("/__test__/data", (req: Request, res: Response) => {
   dbUsers = [];
   res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
