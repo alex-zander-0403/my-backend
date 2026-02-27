@@ -1,16 +1,27 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+// /** @type {import('ts-jest').JestConfigWithTsJest} */
+// module.exports = {
+//   preset: "ts-jest",
+//   testEnvironment: "node",
+//   transform: {
+//     "^.+\\.ts$": [
+//       "ts-jest",
+//       {
+//         tsconfig: "tsconfig.json",
+//       },
+//     ],
+//   },
+//   moduleFileExtensions: ["ts", "js", "json"],
+//   testMatch: ["**/__tests__/**/*.test.ts"],
+//   verbose: true,
+// };
+
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
+  roots: ["<rootDir>/__tests__"],
   transform: {
-    "^.+\\.ts$": [
-      "ts-jest",
-      {
-        tsconfig: "tsconfig.json",
-      },
-    ],
+    "^.+\\.tsx?$": "ts-jest",
   },
-  moduleFileExtensions: ["ts", "js", "json"],
-  testMatch: ["**/__tests__/**/*.test.ts"],
-  verbose: true,
+  testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
 };

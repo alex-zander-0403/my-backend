@@ -9,6 +9,7 @@ import type { CreateUserModel } from "./models/CreateUserModel.js";
 import type { UpdateUserModel } from "./models/UpdateUserModel.js";
 import type { GetQueryUserModel } from "./models/GetQueryUserModel.js";
 import type { UserApiModel } from "./models/UserApiModel.js";
+import type { UserUriParamsModel } from "./models/UserUriParamsModel.js";
 
 export const app = express();
 const port = 3000;
@@ -22,12 +23,13 @@ type UserType = {
   name: string;
   age: number;
   hasCar: boolean;
+  money: number;
 };
 
 let dbUsers: UserType[] = [
-  { id: 1, name: "Alex", age: 43, hasCar: true },
-  { id: 2, name: "Bob", age: 45, hasCar: false },
-  { id: 3, name: "Carl", age: 23, hasCar: true },
+  { id: 1, name: "Alex1", age: 43, hasCar: true, money: 2500 },
+  { id: 2, name: "Bob", age: 45, hasCar: false, money: 130 },
+  { id: 3, name: "Carl", age: 23, hasCar: true, money: 1000 },
 ];
 
 const HTTP_STATUS = {
@@ -37,6 +39,10 @@ const HTTP_STATUS = {
 
   BAD_REQUEST_400: 400,
   NOT_FOUND_404: 404,
+};
+
+const getUserApiModel = (user: UserType): UserApiModel => {
+  return { id: user.id, name: user.name, age: user.age, hasCar: user.hasCar };
 };
 
 // =========={ GET }==========
@@ -62,13 +68,18 @@ app.get(
       );
     }
 
-    res.json(foundedUsers);
+    // обязательное приведение UserType к <UserApiModel>
+    // с помощью пересборки объекта функцией getUserApiModel
+    res.json(foundedUsers.map(getUserApiModel));
   },
 );
 
 app.get(
   "/users/:id",
-  (req: RequestWithParamsType<{ id: string }>, res: Response<UserApiModel>) => {
+  (
+    req: RequestWithParamsType<UserUriParamsModel>,
+    res: Response<UserApiModel>,
+  ) => {
     const foundedUser = dbUsers.find(
       (user) => user.id === Number(req.params.id),
     );
@@ -78,7 +89,9 @@ app.get(
       return;
     }
 
-    res.json(foundedUser);
+    // обязательное приведение UserType к <UserApiModel>
+    // с помощью пересборки объекта функцией getUserApiModel
+    res.json(getUserApiModel(foundedUser));
   },
 );
 
@@ -106,10 +119,14 @@ app.post(
       name: req.body.name,
       age: req.body.age || 0,
       hasCar: req.body.hasCar || false,
+      money: req.body.money || 0,
     };
 
     dbUsers.push(newUser);
-    res.status(HTTP_STATUS.CREATED_201).json(newUser);
+
+    // обязательное приведение UserType к <UserApiModel>
+    // с помощью пересборки объекта функцией getUserApiModel
+    res.status(HTTP_STATUS.CREATED_201).json(getUserApiModel(newUser));
   },
 );
 
@@ -122,7 +139,7 @@ app.post(
 
 app.delete(
   "/users/:id",
-  (req: RequestWithParamsType<{ id: string }>, res: Response) => {
+  (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
     dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
 
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
@@ -141,7 +158,7 @@ app.delete(
 app.put(
   "/users/:id",
   (
-    req: RequestWithParamsAndBodyType<{ id: string }, UpdateUserModel>,
+    req: RequestWithParamsAndBodyType<UserUriParamsModel, UpdateUserModel>,
     res: Response,
   ) => {
     // поиск user для редактирования
