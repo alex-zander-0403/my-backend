@@ -1,13 +1,13 @@
 import express, { type Request, type Response } from "express";
 import type {
-  RequestWithBody,
-  RequestWithParams,
-  RequestWithParamsAndBody,
-  RequestWithQuery,
+  RequestWithBodyType,
+  RequestWithParamsType,
+  RequestWithParamsAndBodyType,
+  RequestWithQueryType,
 } from "./types/endpointTypes.js";
 import type { CreateUserModel } from "./models/CreateUserModel.js";
 import type { UpdateUserModel } from "./models/UpdateUserModel.js";
-import type { QueryUserModel } from "./models/QueryUserModel.js";
+import type { GetQueryUserModel } from "./models/GetQueryUserModel.js";
 import type { UserApiModel } from "./models/UserApiModel.js";
 
 export const app = express();
@@ -48,7 +48,10 @@ app.get("/", (req: Request, res: Response) => {
 // GET /users?name=alex
 app.get(
   "/users",
-  (req: RequestWithQuery<QueryUserModel>, res: Response<UserApiModel[]>) => {
+  (
+    req: RequestWithQueryType<GetQueryUserModel>,
+    res: Response<UserApiModel[]>,
+  ) => {
     // const { name } = req.query;
     let foundedUsers = dbUsers;
 
@@ -65,7 +68,7 @@ app.get(
 
 app.get(
   "/users/:id",
-  (req: RequestWithParams<{ id: string }>, res: Response<UserApiModel>) => {
+  (req: RequestWithParamsType<{ id: string }>, res: Response<UserApiModel>) => {
     const foundedUser = dbUsers.find(
       (user) => user.id === Number(req.params.id),
     );
@@ -90,7 +93,7 @@ app.get(
 
 app.post(
   "/users",
-  (req: RequestWithBody<CreateUserModel>, res: Response<UserApiModel>) => {
+  (req: RequestWithBodyType<CreateUserModel>, res: Response<UserApiModel>) => {
     // const { name, age, hasCar } = req.body;
 
     if (!req.body.name) {
@@ -98,7 +101,7 @@ app.post(
       return;
     }
 
-    const newUser = {
+    const newUser: UserType = {
       id: Number(new Date()),
       name: req.body.name,
       age: req.body.age || 0,
@@ -119,7 +122,7 @@ app.post(
 
 app.delete(
   "/users/:id",
-  (req: RequestWithParams<{ id: string }>, res: Response) => {
+  (req: RequestWithParamsType<{ id: string }>, res: Response) => {
     dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
 
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
@@ -138,7 +141,7 @@ app.delete(
 app.put(
   "/users/:id",
   (
-    req: RequestWithParamsAndBody<{ id: string }, UpdateUserModel>,
+    req: RequestWithParamsAndBodyType<{ id: string }, UpdateUserModel>,
     res: Response,
   ) => {
     // поиск user для редактирования
