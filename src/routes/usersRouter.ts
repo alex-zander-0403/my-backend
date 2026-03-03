@@ -17,6 +17,7 @@ let dbUsers = db;
 
 // ============================================================
 
+// утилита для приведения UserType к <UserApiModel>
 const getUserApiModel = (user: UserType): UserApiModel => {
   return { id: user.id, name: user.name, age: user.age, hasCar: user.hasCar };
 };
