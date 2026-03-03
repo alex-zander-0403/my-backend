@@ -1,15 +1,16 @@
-import { Request, Response } from "express";
-import { db } from "src/db/db";
-import { HTTP_STATUS } from "./usersRouter";
+import express, { Request, Response } from "express";
+import { db } from "../db/db";
+import { HTTP_STATUS } from "../utils/statusCodes";
 
 let dbUsers = db;
 
 // ============================================================
 
-// endpoint for tests
-export function testsRoute(app: any) {
-  app.delete("/__test__/data", (req: Request, res: Response) => {
-    dbUsers = [];
-    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
-  });
-}
+// создание роутера
+export const testsRouter = express.Router();
+
+// конфигурируем роутер
+testsRouter.delete("/data", (req: Request, res: Response) => {
+  dbUsers = [];
+  res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+});

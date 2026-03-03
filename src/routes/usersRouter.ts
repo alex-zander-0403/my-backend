@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { db, UserType } from "src/db/db";
+import { db, UserType } from "../db/db";
 import { CreateUserModel } from "src/models/CreateUserModel";
 import { GetQueryUserModel } from "src/models/GetQueryUserModel";
 import { UpdateUserModel } from "src/models/UpdateUserModel";
@@ -11,19 +11,11 @@ import {
   RequestWithParamsType,
   RequestWithQueryType,
 } from "src/types/endpointTypes";
+import { HTTP_STATUS } from "../../src/utils/statusCodes";
 
 let dbUsers = db;
 
 // ============================================================
-
-export const HTTP_STATUS = {
-  OK_200: 200,
-  CREATED_201: 201,
-  NO_CONTENT_204: 204,
-
-  BAD_REQUEST_400: 400,
-  NOT_FOUND_404: 404,
-};
 
 const getUserApiModel = (user: UserType): UserApiModel => {
   return { id: user.id, name: user.name, age: user.age, hasCar: user.hasCar };
@@ -34,7 +26,7 @@ const getUserApiModel = (user: UserType): UserApiModel => {
 // создание роутера
 export const usersRouter = express.Router();
 
-// конфигурация роутера
+// конфигурируем роутер
 // =========={ GET }==========
 
 // GET /users?name=alex
