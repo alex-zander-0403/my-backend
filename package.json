@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "watch": "tsc --watch",
-    "dev": "nodemon ./dist/index.js",
+    "dev": "nodemon ./dist/src/index.js",
     "test": "jest"
   },
   "author": "",

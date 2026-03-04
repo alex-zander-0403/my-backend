@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { db, UserType } from "../db/db";
+// import { db, UserType } from "../db/db";
 import { CreateUserModel } from "src/models/CreateUserModel";
 import { GetQueryUserModel } from "src/models/GetQueryUserModel";
 import { UpdateUserModel } from "src/models/UpdateUserModel";
@@ -12,8 +12,9 @@ import {
   RequestWithQueryType,
 } from "src/types/endpointTypes";
 import { HTTP_STATUS } from "../../src/utils/statusCodes";
+import { usersRepository, UserType } from "src/dal/users-repository";
 
-let dbUsers = db;
+// let dbUsers = db;
 
 // ============================================================
 
@@ -37,42 +38,34 @@ usersRouter.get(
     req: RequestWithQueryType<GetQueryUserModel>,
     res: Response<UserApiModel[]>,
   ) => {
-    // const { name } = req.query;
-    let foundedUsers = dbUsers;
-
-    if (req.query.name) {
-      foundedUsers = dbUsers.filter(
-        (user) =>
-          user.name.toLowerCase().indexOf(req.query.name.toLowerCase()) > -1,
-      );
-    }
+    const users = usersRepository.findUsers(req.query.name || null);
 
     // обязательное приведение UserType к <UserApiModel>
     // с помощью пересборки объекта функцией getUserApiModel
-    res.json(foundedUsers.map(getUserApiModel));
+    res.json(users.map(getUserApiModel));
   },
 );
 
-usersRouter.get(
-  "/:id",
-  (
-    req: RequestWithParamsType<UserUriParamsModel>,
-    res: Response<UserApiModel>,
-  ) => {
-    const foundedUser = dbUsers.find(
-      (user) => user.id === Number(req.params.id),
-    );
+// usersRouter.get(
+//   "/:id",
+//   (
+//     req: RequestWithParamsType<UserUriParamsModel>,
+//     res: Response<UserApiModel>,
+//   ) => {
+//     const foundedUser = dbUsers.find(
+//       (user) => user.id === Number(req.params.id),
+//     );
 
-    if (!foundedUser) {
-      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
-      return;
-    }
+//     if (!foundedUser) {
+//       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+//       return;
+//     }
 
-    // обязательное приведение UserType к <UserApiModel>
-    // с помощью пересборки объекта функцией getUserApiModel
-    res.json(getUserApiModel(foundedUser));
-  },
-);
+//     // обязательное приведение UserType к <UserApiModel>
+//     // с помощью пересборки объекта функцией getUserApiModel
+//     res.json(getUserApiModel(foundedUser));
+//   },
+// );
 
 // =========={ POST }==========
 
@@ -109,55 +102,55 @@ usersRouter.post(
   },
 );
 
-// =========={ DELETE }==========
+// // =========={ DELETE }==========
 
-// fetch('http://localhost:3000/users/1', {
-//     method: "DELETE"})
-//     .then((res) => res.json())
-//     .then((data) => console.log(data))
+// // fetch('http://localhost:3000/users/1', {
+// //     method: "DELETE"})
+// //     .then((res) => res.json())
+// //     .then((data) => console.log(data))
 
-usersRouter.delete(
-  "/:id",
-  (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
-    dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
+// usersRouter.delete(
+//   "/:id",
+//   (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
+//     dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
 
-    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
-  },
-);
+//     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+//   },
+// );
 
-// =========={ UPDATE }==========
+// // =========={ UPDATE }==========
 
-// fetch('http://localhost:3000/users/1', {
-//     method: "PUT",
-//     headers: {'content-type': 'application/json'},
-//     body: JSON.stringify({ name: "David", age: 100, hasCar: true}) })
-//     .then((res) => res.json())
-//     .then((data) => console.log(data))
+// // fetch('http://localhost:3000/users/1', {
+// //     method: "PUT",
+// //     headers: {'content-type': 'application/json'},
+// //     body: JSON.stringify({ name: "David", age: 100, hasCar: true}) })
+// //     .then((res) => res.json())
+// //     .then((data) => console.log(data))
 
-usersRouter.put(
-  "/:id",
-  (
-    req: RequestWithParamsAndBodyType<UserUriParamsModel, UpdateUserModel>,
-    res: Response,
-  ) => {
-    // поиск user для редактирования
-    let userForUpdate = dbUsers.find(
-      (user) => user.id === Number(req.params.id),
-    );
+// usersRouter.put(
+//   "/:id",
+//   (
+//     req: RequestWithParamsAndBodyType<UserUriParamsModel, UpdateUserModel>,
+//     res: Response,
+//   ) => {
+//     // поиск user для редактирования
+//     let userForUpdate = dbUsers.find(
+//       (user) => user.id === Number(req.params.id),
+//     );
 
-    // проверка на наличие user
-    if (!userForUpdate) {
-      res
-        .status(HTTP_STATUS.NOT_FOUND_404)
-        .send("Пользователь для редактирования не найден!");
-      return;
-    }
+//     // проверка на наличие user
+//     if (!userForUpdate) {
+//       res
+//         .status(HTTP_STATUS.NOT_FOUND_404)
+//         .send("Пользователь для редактирования не найден!");
+//       return;
+//     }
 
-    // update
-    userForUpdate.name = req.body.name;
-    userForUpdate.age = req.body.age || 0;
-    userForUpdate.hasCar = req.body.hasCar || false;
+//     // update
+//     userForUpdate.name = req.body.name;
+//     userForUpdate.age = req.body.age || 0;
+//     userForUpdate.hasCar = req.body.hasCar || false;
 
-    res.status(HTTP_STATUS.OK_200).json(userForUpdate);
-  },
-);
+//     res.status(HTTP_STATUS.OK_200).json(userForUpdate);
+//   },
+// );
