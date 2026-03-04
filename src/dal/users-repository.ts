@@ -1,4 +1,5 @@
 import { CreateUserModel } from "src/models/CreateUserModel";
+import { UpdateUserModel } from "src/models/UpdateUserModel";
 
 export type UserType = {
   id: number;
@@ -50,5 +51,38 @@ export const usersRepository = {
 
     DB.push(newUser);
     return newUser;
+  },
+
+  // =========={ UPDATE :id }==========
+
+  updateUser(id: string, updateUserData: UpdateUserModel) {
+    let userForUpdate = DB.find((user) => user.id === Number(id));
+
+    // update
+    if (userForUpdate) {
+      if (updateUserData.name !== undefined) {
+        userForUpdate.name = updateUserData.name;
+      }
+
+      if (updateUserData.age !== undefined) {
+        userForUpdate.age = updateUserData.age;
+      }
+
+      if (updateUserData.hasCar !== undefined) {
+        userForUpdate.hasCar = updateUserData.hasCar;
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  // =========={ DELETE :id }==========
+
+  deleteUserById(id: string) {
+    const foundedUser = DB.find((user) => user.id === Number(id));
+
+    return foundedUser;
   },
 };

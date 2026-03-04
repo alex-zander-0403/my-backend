@@ -14,12 +14,9 @@ import {
 import { HTTP_STATUS } from "../../src/utils/statusCodes";
 import { usersRepository, UserType } from "src/dal/users-repository";
 
-// let dbUsers = db;
-
 // ============================================================
 
 // утилита для приведения UserType к <UserApiModel>
-//
 const getUserApiModel = (user: UserType): UserApiModel => {
   return { id: user.id, name: user.name, age: user.age, hasCar: user.hasCar };
 };
@@ -41,8 +38,6 @@ usersRouter.get(
   ) => {
     const users = usersRepository.getUsers(req.query.name || null);
 
-    // обязательное приведение UserType к <UserApiModel>
-    // с помощью пересборки объекта функцией getUserApiModel
     res.json(users.map(getUserApiModel));
   },
 );
@@ -60,8 +55,6 @@ usersRouter.get(
       return;
     }
 
-    // обязательное приведение UserType к <UserApiModel>
-    // с помощью пересборки объекта функцией getUserApiModel
     res.json(getUserApiModel(foundedUser));
   },
 );
@@ -85,27 +78,26 @@ usersRouter.post(
 
     const newUser = usersRepository.createUser(req.body);
 
-    // обязательное приведение UserType к <UserApiModel>
-    // с помощью пересборки объекта функцией getUserApiModel
     res.status(HTTP_STATUS.CREATED_201).json(getUserApiModel(newUser));
   },
 );
 
 // =========={ DELETE }==========
 
-// fetch('http://localhost:3000/users/1', {
-//     method: "DELETE"})
-//     .then((res) => res.json())
-//     .then((data) => console.log(data))
+// fetch("http://localhost:3000/users/1", {
+//   method: "DELETE",
+// })
+//   .then((res) => res.json())
+//   .then((data) => console.log(data));
 
-// usersRouter.delete(
-//   "/:id",
-//   (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
-//     dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
+usersRouter.delete(
+  "/:id",
+  (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
+    dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
 
-//     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
-//   },
-// );
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+  },
+);
 
 // // =========={ UPDATE }==========
 
@@ -116,30 +108,23 @@ usersRouter.post(
 // //     .then((res) => res.json())
 //     .then((data) => console.log(data))
 
-// usersRouter.put(
-//   "/:id",
-//   (
-//     req: RequestWithParamsAndBodyType<UserUriParamsModel, UpdateUserModel>,
-//     res: Response,
-//   ) => {
-//     // поиск user для редактирования
-//     let userForUpdate = dbUsers.find(
-//       (user) => user.id === Number(req.params.id),
-//     );
+usersRouter.put(
+  "/:id",
+  (
+    req: RequestWithParamsAndBodyType<UserUriParamsModel, UpdateUserModel>,
+    res: Response,
+  ) => {
+    const isUserUpdated = usersRepository.updateUser(req.params.id, req.body);
 
-//     // проверка на наличие user
-//     if (!userForUpdate) {
-//       res
-//         .status(HTTP_STATUS.NOT_FOUND_404)
-//         .send("Пользователь для редактирования не найден!");
-//       return;
-//     }
+    if (!isUserUpdated) {
+      res
+        .status(HTTP_STATUS.BAD_REQUEST_400)
+        .send("Пользователь для редактирования не найден!");
+      return;
+    }
 
-//     // update
-//     userForUpdate.name = req.body.name;
-//     userForUpdate.age = req.body.age || 0;
-//     userForUpdate.hasCar = req.body.hasCar || false;
+    const updatedUser = usersRepository.getUserById(req.params.id);
 
-//     res.status(HTTP_STATUS.OK_200).json(userForUpdate);
-//   },
-// );
+    res.status(HTTP_STATUS.OK_200).json(updatedUser);
+  },
+);
