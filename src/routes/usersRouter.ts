@@ -19,6 +19,7 @@ import { usersRepository, UserType } from "src/dal/users-repository";
 // ============================================================
 
 // утилита для приведения UserType к <UserApiModel>
+//
 const getUserApiModel = (user: UserType): UserApiModel => {
   return { id: user.id, name: user.name, age: user.age, hasCar: user.hasCar };
 };
@@ -38,7 +39,7 @@ usersRouter.get(
     req: RequestWithQueryType<GetQueryUserModel>,
     res: Response<UserApiModel[]>,
   ) => {
-    const users = usersRepository.findUsers(req.query.name || null);
+    const users = usersRepository.getUsers(req.query.name || null);
 
     // обязательное приведение UserType к <UserApiModel>
     // с помощью пересборки объекта функцией getUserApiModel
@@ -46,26 +47,24 @@ usersRouter.get(
   },
 );
 
-// usersRouter.get(
-//   "/:id",
-//   (
-//     req: RequestWithParamsType<UserUriParamsModel>,
-//     res: Response<UserApiModel>,
-//   ) => {
-//     const foundedUser = dbUsers.find(
-//       (user) => user.id === Number(req.params.id),
-//     );
+usersRouter.get(
+  "/:id",
+  (
+    req: RequestWithParamsType<UserUriParamsModel>,
+    res: Response<UserApiModel>,
+  ) => {
+    const foundedUser = usersRepository.getUserById(req.params.id);
 
-//     if (!foundedUser) {
-//       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
-//       return;
-//     }
+    if (!foundedUser) {
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      return;
+    }
 
-//     // обязательное приведение UserType к <UserApiModel>
-//     // с помощью пересборки объекта функцией getUserApiModel
-//     res.json(getUserApiModel(foundedUser));
-//   },
-// );
+    // обязательное приведение UserType к <UserApiModel>
+    // с помощью пересборки объекта функцией getUserApiModel
+    res.json(getUserApiModel(foundedUser));
+  },
+);
 
 // =========={ POST }==========
 
@@ -79,19 +78,12 @@ usersRouter.get(
 usersRouter.post(
   "/",
   (req: RequestWithBodyType<CreateUserModel>, res: Response<UserApiModel>) => {
-    // const { name, age, hasCar, money } = req.body;
-
     if (!req.body.name) {
       res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
       return;
     }
 
-    const newUser = usersRepository.createUser({
-      name: req.body.name,
-      age: req.body.age || 0,
-      hasCar: req.body.hasCar || false,
-      money: req.body.money || 0,
-    });
+    const newUser = usersRepository.createUser(req.body);
 
     // обязательное приведение UserType к <UserApiModel>
     // с помощью пересборки объекта функцией getUserApiModel
@@ -99,12 +91,12 @@ usersRouter.post(
   },
 );
 
-// // =========={ DELETE }==========
+// =========={ DELETE }==========
 
-// // fetch('http://localhost:3000/users/1', {
-// //     method: "DELETE"})
-// //     .then((res) => res.json())
-// //     .then((data) => console.log(data))
+// fetch('http://localhost:3000/users/1', {
+//     method: "DELETE"})
+//     .then((res) => res.json())
+//     .then((data) => console.log(data))
 
 // usersRouter.delete(
 //   "/:id",
@@ -122,7 +114,7 @@ usersRouter.post(
 // //     headers: {'content-type': 'application/json'},
 // //     body: JSON.stringify({ name: "David", age: 100, hasCar: true}) })
 // //     .then((res) => res.json())
-// //     .then((data) => console.log(data))
+//     .then((data) => console.log(data))
 
 // usersRouter.put(
 //   "/:id",

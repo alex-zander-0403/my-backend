@@ -1,3 +1,5 @@
+import { CreateUserModel } from "src/models/CreateUserModel";
+
 export type UserType = {
   id: number;
   name: string;
@@ -13,8 +15,11 @@ let DB: UserType[] = [
   { id: 3, name: "Carl", age: 23, hasCar: true, money: 1000 },
 ];
 
+// =======================================================
+
 export const usersRepository = {
-  findUsers(queryString: string | null) {
+  // =========={ GET }==========
+  getUsers(queryString: string | null) {
     if (queryString) {
       const filteredUsers = DB.filter(
         (user) =>
@@ -26,7 +31,15 @@ export const usersRepository = {
     }
   },
 
-  createUser(newUserData) {
+  // =========={ GET :id }==========
+  getUserById(id: string) {
+    const foundedUser = DB.find((user) => user.id === Number(id));
+
+    return foundedUser;
+  },
+
+  // =========={ POST }========== CreateUserModel?
+  createUser(newUserData: CreateUserModel) {
     const newUser: UserType = {
       id: Number(new Date()),
       name: newUserData.name,
@@ -38,9 +51,4 @@ export const usersRepository = {
     DB.push(newUser);
     return newUser;
   },
-
-  // for tests
-  // clearUsersDB() {
-  //   DB = [];
-  // },
 };
