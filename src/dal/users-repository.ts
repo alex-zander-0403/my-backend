@@ -81,8 +81,6 @@ export const usersRepository = {
   // =========={ DELETE :id }==========
 
   deleteUserById(id: string) {
-    const foundedUser = DB.find((user) => user.id === Number(id));
-
-    return foundedUser;
+    DB = DB.filter((user) => user.id !== Number(id));
   },
 };

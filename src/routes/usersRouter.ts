@@ -82,31 +82,15 @@ usersRouter.post(
   },
 );
 
-// =========={ DELETE }==========
+// =========={ UPDATE }==========
 
 // fetch("http://localhost:3000/users/1", {
-//   method: "DELETE",
+//   method: "PUT",
+//   headers: { "content-type": "application/json" },
+//   body: JSON.stringify({ name: "David", age: 100, hasCar: true }),
 // })
 //   .then((res) => res.json())
 //   .then((data) => console.log(data));
-
-usersRouter.delete(
-  "/:id",
-  (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
-    dbUsers = dbUsers.filter((user) => user.id !== Number(req.params.id));
-
-    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
-  },
-);
-
-// // =========={ UPDATE }==========
-
-// // fetch('http://localhost:3000/users/1', {
-// //     method: "PUT",
-// //     headers: {'content-type': 'application/json'},
-// //     body: JSON.stringify({ name: "David", age: 100, hasCar: true}) })
-// //     .then((res) => res.json())
-//     .then((data) => console.log(data))
 
 usersRouter.put(
   "/:id",
@@ -126,5 +110,27 @@ usersRouter.put(
     const updatedUser = usersRepository.getUserById(req.params.id);
 
     res.status(HTTP_STATUS.OK_200).json(updatedUser);
+  },
+);
+
+// =========={ DELETE }==========
+
+// fetch("http://localhost:3000/users/1", {
+//   method: "DELETE",
+// })
+//   .then((res) => res.json())
+//   .then((data) => console.log(data));
+
+usersRouter.delete(
+  "/:id",
+  (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
+    if (!req.params.id) {
+      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
+      return;
+    }
+
+    usersRepository.deleteUserById(req.params.id);
+
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   },
 );
