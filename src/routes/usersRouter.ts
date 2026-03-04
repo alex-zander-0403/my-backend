@@ -79,22 +79,19 @@ usersRouter.get(
 usersRouter.post(
   "/",
   (req: RequestWithBodyType<CreateUserModel>, res: Response<UserApiModel>) => {
-    // const { name, age, hasCar } = req.body;
+    // const { name, age, hasCar, money } = req.body;
 
     if (!req.body.name) {
       res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
       return;
     }
 
-    const newUser: UserType = {
-      id: Number(new Date()),
+    const newUser = usersRepository.createUser({
       name: req.body.name,
       age: req.body.age || 0,
       hasCar: req.body.hasCar || false,
       money: req.body.money || 0,
-    };
-
-    dbUsers.push(newUser);
+    });
 
     // обязательное приведение UserType к <UserApiModel>
     // с помощью пересборки объекта функцией getUserApiModel

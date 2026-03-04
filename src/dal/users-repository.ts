@@ -26,6 +26,19 @@ export const usersRepository = {
     }
   },
 
+  createUser(newUserData) {
+    const newUser: UserType = {
+      id: Number(new Date()),
+      name: newUserData.name,
+      age: newUserData.age || 0,
+      hasCar: newUserData.hasCar || false,
+      money: newUserData.money || 0,
+    };
+
+    DB.push(newUser);
+    return newUser;
+  },
+
   // for tests
   // clearUsersDB() {
   //   DB = [];
