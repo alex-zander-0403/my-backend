@@ -83,4 +83,10 @@ export const usersRepository = {
   deleteUserById(id: string) {
     DB = DB.filter((user) => user.id !== Number(id));
   },
+
+  // =========={ RESET - TEST ROUTE }==========
+
+  testReset() {
+    DB = [];
+  },
 };

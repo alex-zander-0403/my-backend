@@ -1,5 +1,4 @@
 import express, { Request, Response } from "express";
-// import { db, UserType } from "../db/db";
 import { CreateUserModel } from "src/models/CreateUserModel";
 import { GetQueryUserModel } from "src/models/GetQueryUserModel";
 import { UpdateUserModel } from "src/models/UpdateUserModel";
@@ -12,7 +11,7 @@ import {
   RequestWithQueryType,
 } from "src/types/endpointTypes";
 import { HTTP_STATUS } from "../../src/utils/statusCodes";
-import { usersRepository, UserType } from "src/dal/users-repository";
+import { usersRepository, UserType } from "../dal/users-repository";
 
 // ============================================================
 
@@ -133,4 +132,12 @@ usersRouter.delete(
 
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   },
+
+  // =========={ RESET - TEST ROUTE }==========
+
+  usersRouter.delete("/reset", (req: Request, res: Response) => {
+    usersRepository.testReset();
+
+    res.sendStatus(HTTP_STATUS.OK_200);
+  }),
 );

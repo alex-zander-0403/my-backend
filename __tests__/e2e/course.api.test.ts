@@ -5,7 +5,7 @@ import request from "supertest";
 describe("/users", () => {
   // нормализация перед тестами
   beforeAll(async () => {
-    await request(app).delete("/__tests__/data");
+    await request(app).delete("/users/reset").expect(200);
   });
 
   it("should return 200 and empty array", async () => {
