@@ -18,6 +18,7 @@ import { HTTP_STATUS } from "../utils/statusCodes.js";
 import type { CreateUserModel } from "../models/CreateUserModel.js";
 import type { UpdateUserModel } from "../models/UpdateUserModel.js";
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware.js";
+import { nameValidationMiddleware } from "../middlewares/nameValidationMiddleware.js";
 
 // ============================================================
 
