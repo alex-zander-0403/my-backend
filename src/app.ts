@@ -1,11 +1,15 @@
-import express from "express";
-import { usersRouter } from "./routes/usersRouter";
-import { testsRouter } from "./routes/testsRouter";
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+} from "express";
+import { usersRouter } from "./routes/usersRouter.js";
+import { testsRouter } from "./routes/testsRouter.js";
 
 // ============================================================
 
-// создание сервера
 export const app = express();
+
 app.use(express.json());
 
 // роутеры

@@ -1,5 +1,5 @@
-import { CreateUserModel } from "src/models/CreateUserModel";
-import { UpdateUserModel } from "src/models/UpdateUserModel";
+import type { CreateUserModel } from "../models/CreateUserModel.js";
+import type { UpdateUserModel } from "../models/UpdateUserModel.js";
 
 export type UserType = {
   id: number;
@@ -54,7 +54,6 @@ export const usersRepository = {
   },
 
   // =========={ UPDATE :id }==========
-
   updateUser(id: string, updateUserData: UpdateUserModel) {
     let userForUpdate = DB.find((user) => user.id === Number(id));
 
@@ -79,13 +78,11 @@ export const usersRepository = {
   },
 
   // =========={ DELETE :id }==========
-
   deleteUserById(id: string) {
     DB = DB.filter((user) => user.id !== Number(id));
   },
 
   // =========={ RESET - TEST ROUTE }==========
-
   testReset() {
     DB = [];
   },

@@ -1,17 +1,12 @@
-import express, { Request, Response } from "express";
-import { CreateUserModel } from "src/models/CreateUserModel";
-import { GetQueryUserModel } from "src/models/GetQueryUserModel";
-import { UpdateUserModel } from "src/models/UpdateUserModel";
-import { UserApiModel } from "src/models/UserApiModel";
-import { UserUriParamsModel } from "src/models/UserUriParamsModel";
-import {
-  RequestWithBodyType,
-  RequestWithParamsAndBodyType,
-  RequestWithParamsType,
-  RequestWithQueryType,
-} from "src/types/endpointTypes";
-import { HTTP_STATUS } from "../../src/utils/statusCodes";
-import { usersRepository, UserType } from "../dal/users-repository";
+import express, { type Request, type Response } from "express";
+import { usersRepository, type UserType } from "../dal/users-repository.js";
+import type { UserApiModel } from "../models/UserApiModel.js";
+import type { GetQueryUserModel } from "../models/GetQueryUserModel.js";
+import type { RequestWithBodyType, RequestWithParamsAndBodyType, RequestWithParamsType, RequestWithQueryType } from "../types/endpointTypes.js";
+import type { UserUriParamsModel } from "../models/UserUriParamsModel.js";
+import { HTTP_STATUS } from "../utils/statusCodes.js";
+import type { CreateUserModel } from "../models/CreateUserModel.js";
+import type { UpdateUserModel } from "../models/UpdateUserModel.js";
 
 // ============================================================
 

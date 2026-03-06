@@ -1,8 +1,5 @@
-import express, { Request, Response } from "express";
-// import { db } from "../db/db";
-import { HTTP_STATUS } from "../utils/statusCodes";
-
-// let dbUsers = db;
+import express, { type Request, type Response } from "express";
+import { HTTP_STATUS } from "../utils/statusCodes.js";
 
 // ============================================================
 
