@@ -1,12 +1,19 @@
 import express, { type Request, type Response } from "express";
+import { body, query, validationResult } from "express-validator";
 import { usersRepository, type UserType } from "../dal/users-repository.js";
 import type { UserApiModel } from "../models/UserApiModel.js";
 import type { GetQueryUserModel } from "../models/GetQueryUserModel.js";
-import type { RequestWithBodyType, RequestWithParamsAndBodyType, RequestWithParamsType, RequestWithQueryType } from "../types/endpointTypes.js";
+import type {
+  RequestWithBodyType,
+  RequestWithParamsAndBodyType,
+  RequestWithParamsType,
+  RequestWithQueryType,
+} from "../types/endpointTypes.js";
 import type { UserUriParamsModel } from "../models/UserUriParamsModel.js";
 import { HTTP_STATUS } from "../utils/statusCodes.js";
 import type { CreateUserModel } from "../models/CreateUserModel.js";
 import type { UpdateUserModel } from "../models/UpdateUserModel.js";
+import { STATUS_CODES } from "node:http";
 
 // ============================================================
 
@@ -17,12 +24,9 @@ const getUserApiModel = (user: UserType): UserApiModel => {
 
 // ============================================================
 
-// создание роутера
 export const usersRouter = express.Router();
 
-// конфигурируем роутер
 // =========={ GET }==========
-
 // GET /users?name=alex
 usersRouter.get(
   "/",
@@ -54,20 +58,32 @@ usersRouter.get(
 );
 
 // =========={ POST }==========
-
 // fetch('http://localhost:3000/users', {
 //     method: "POST",
 //     headers: {'content-type': 'application/json'},
 //     body: JSON.stringify({ name: "David", age: 100, hasCar: true}) })
 //     .then((res) => res.json())
 //     .then((data) => console.log(data))
-
 usersRouter.post(
   "/",
-  (req: RequestWithBodyType<CreateUserModel>, res: Response<UserApiModel>) => {
-    if (!req.body.name) {
-      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
-      return;
+  body("name")
+    .trim()
+    .isLength({ min: 3, max: 30 })
+    .withMessage("имя должно быть от 3 до 30 символов"), // не обязательно
+  (
+    req: RequestWithBodyType<CreateUserModel>,
+    res: Response<UserApiModel | string>,
+  ) => {
+    // if (!req.body.name.trim()) {
+    //   res
+    //     .status(HTTP_STATUS.BAD_REQUEST_400)
+    //     .send("Для создания пользователя имя обязательно!");
+    // }
+    const errors = validationResult(req);
+    if (!errors.isEmpty) {
+      return res
+        .status(HTTP_STATUS.BAD_REQUEST_400)
+        .json({ errors: errors.array() });
     }
 
     const newUser = usersRepository.createUser(req.body);
@@ -85,7 +101,6 @@ usersRouter.post(
 // })
 //   .then((res) => res.json())
 //   .then((data) => console.log(data));
-
 usersRouter.put(
   "/:id",
   (
@@ -108,13 +123,11 @@ usersRouter.put(
 );
 
 // =========={ DELETE }==========
-
 // fetch("http://localhost:3000/users/1", {
 //   method: "DELETE",
 // })
 //   .then((res) => res.json())
 //   .then((data) => console.log(data));
-
 usersRouter.delete(
   "/:id",
   (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
