@@ -1,5 +1,9 @@
-import express, { type Request, type Response } from "express";
-import { body, query, validationResult } from "express-validator";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
+import { body, validationResult } from "express-validator";
 import { usersRepository, type UserType } from "../dal/users-repository.js";
 import type { UserApiModel } from "../models/UserApiModel.js";
 import type { GetQueryUserModel } from "../models/GetQueryUserModel.js";
@@ -13,7 +17,7 @@ import type { UserUriParamsModel } from "../models/UserUriParamsModel.js";
 import { HTTP_STATUS } from "../utils/statusCodes.js";
 import type { CreateUserModel } from "../models/CreateUserModel.js";
 import type { UpdateUserModel } from "../models/UpdateUserModel.js";
-import { STATUS_CODES } from "node:http";
+import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware.js";
 
 // ============================================================
 
@@ -66,26 +70,9 @@ usersRouter.get(
 //     .then((data) => console.log(data))
 usersRouter.post(
   "/",
-  body("name")
-    .trim()
-    .isLength({ min: 3, max: 30 })
-    .withMessage("имя должно быть от 3 до 30 символов"), // не обязательно
-  (
-    req: RequestWithBodyType<CreateUserModel>,
-    res: Response<UserApiModel | string>,
-  ) => {
-    // if (!req.body.name.trim()) {
-    //   res
-    //     .status(HTTP_STATUS.BAD_REQUEST_400)
-    //     .send("Для создания пользователя имя обязательно!");
-    // }
-    const errors = validationResult(req);
-    if (!errors.isEmpty) {
-      return res
-        .status(HTTP_STATUS.BAD_REQUEST_400)
-        .json({ errors: errors.array() });
-    }
-
+  nameValidationMiddleware,
+  inputValidationMiddleware,
+  (req: RequestWithBodyType<CreateUserModel>, res: Response<UserApiModel>) => {
     const newUser = usersRepository.createUser(req.body);
 
     res.status(HTTP_STATUS.CREATED_201).json(getUserApiModel(newUser));
@@ -103,10 +90,19 @@ usersRouter.post(
 //   .then((data) => console.log(data));
 usersRouter.put(
   "/:id",
+  nameValidationMiddleware,
+  inputValidationMiddleware,
   (
     req: RequestWithParamsAndBodyType<UserUriParamsModel, UpdateUserModel>,
     res: Response,
   ) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty) {
+      return res
+        .status(HTTP_STATUS.BAD_REQUEST_400)
+        .json({ errors: errors.array() });
+    }
+
     const isUserUpdated = usersRepository.updateUser(req.params.id, req.body);
 
     if (!isUserUpdated) {
