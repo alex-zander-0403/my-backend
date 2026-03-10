@@ -136,13 +136,13 @@ usersRouter.put(
 //   .then((data) => console.log(data));
 usersRouter.delete(
   "/:id",
-  (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
+  async (req: RequestWithParamsType<UserUriParamsModel>, res: Response) => {
     if (!req.params.id) {
       res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
       return;
     }
 
-    usersRepository.deleteUserById(req.params.id);
+    await usersRepository.deleteUserById(req.params.id);
 
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   },

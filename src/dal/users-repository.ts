@@ -33,8 +33,8 @@ export const usersRepository = {
     }
   },
 
-  // =========={ GET :id }==========
-  getUserById(id: string) {
+  // =========={ async GET :id }==========
+  async getUserById(id: string): Promise<UserType | undefined> {
     const foundedUser = DB.find((user) => user.id === Number(id));
 
     return foundedUser;
@@ -54,7 +54,7 @@ export const usersRepository = {
     return newUser;
   },
 
-  // =========={ UPDATE :id }==========
+  // =========={ async UPDATE :id }==========
   async updateUser(
     id: string,
     updateUserData: UpdateUserModel,
@@ -81,8 +81,8 @@ export const usersRepository = {
     }
   },
 
-  // =========={ DELETE :id }==========
-  deleteUserById(id: string) {
+  // =========={ async DELETE :id }==========
+  async deleteUserById(id: string): Promise<void> {
     DB = DB.filter((user) => user.id !== Number(id));
   },
 
