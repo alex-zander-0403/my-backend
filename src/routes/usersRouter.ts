@@ -39,7 +39,9 @@ usersRouter.get(
     req: RequestWithQueryType<GetQueryUserModel>,
     res: Response<UserApiModel[]>,
   ) => {
-    const users = await usersRepository.getUsers(req.query.name || null);
+    const users: UserType[] = await usersRepository.getUsers(
+      req.query.name || null,
+    );
 
     res.json(users.map(getUserApiModel));
   },
@@ -48,11 +50,11 @@ usersRouter.get(
 // =========={ GET :id }==========
 usersRouter.get(
   "/:id",
-  (
+  async (
     req: RequestWithParamsType<UserUriParamsModel>,
     res: Response<UserApiModel>,
   ) => {
-    const foundedUser = usersRepository.getUserById(req.params.id);
+    const foundedUser = await usersRepository.getUserById(req.params.id);
 
     if (!foundedUser) {
       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
@@ -74,8 +76,11 @@ usersRouter.post(
   "/",
   nameValidationMiddleware,
   inputValidationMiddleware,
-  (req: RequestWithBodyType<CreateUserModel>, res: Response<UserApiModel>) => {
-    const newUser = usersRepository.createUser(req.body);
+  async (
+    req: RequestWithBodyType<CreateUserModel>,
+    res: Response<UserApiModel>,
+  ) => {
+    const newUser: UserType = await usersRepository.createUser(req.body);
 
     res.status(HTTP_STATUS.CREATED_201).json(getUserApiModel(newUser));
   },
