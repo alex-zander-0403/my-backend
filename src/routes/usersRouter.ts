@@ -99,7 +99,7 @@ usersRouter.put(
   "/:id",
   nameValidationMiddleware,
   inputValidationMiddleware,
-  (
+  async (
     req: RequestWithParamsAndBodyType<UserUriParamsModel, UpdateUserModel>,
     res: Response,
   ) => {
@@ -110,7 +110,10 @@ usersRouter.put(
         .json({ errors: errors.array() });
     }
 
-    const isUserUpdated = usersRepository.updateUser(req.params.id, req.body);
+    const isUserUpdated = await usersRepository.updateUser(
+      req.params.id,
+      req.body,
+    );
 
     if (!isUserUpdated) {
       res

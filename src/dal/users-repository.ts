@@ -55,7 +55,10 @@ export const usersRepository = {
   },
 
   // =========={ UPDATE :id }==========
-  updateUser(id: string, updateUserData: UpdateUserModel) {
+  async updateUser(
+    id: string,
+    updateUserData: UpdateUserModel,
+  ): Promise<boolean> {
     let userForUpdate = DB.find((user) => user.id === Number(id));
 
     // update
