@@ -19,8 +19,9 @@ let DB: UserType[] = [
 // =======================================================
 
 export const usersRepository = {
+  //
   // =========={ GET }==========
-  getUsers(queryString: string | null) {
+  async getUsers(queryString: string | null): Promise<UserType[]> {
     if (queryString) {
       const filteredUsers = DB.filter(
         (user) =>
@@ -33,7 +34,7 @@ export const usersRepository = {
   },
 
   // =========={ GET :id }==========
-  getUserById(id: string) {
+  async getUserById(id: string): Promise<UserType> {
     const foundedUser = DB.find((user) => user.id === Number(id));
 
     return foundedUser;
@@ -41,7 +42,6 @@ export const usersRepository = {
 
   // =========={ POST }========== CreateUserModel?
   createUser(newUserData: CreateUserModel) {
-    
     const newUser: UserType = {
       id: Number(new Date()),
       name: newUserData.name,

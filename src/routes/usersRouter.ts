@@ -35,16 +35,17 @@ export const usersRouter = express.Router();
 // GET /users?name=alex
 usersRouter.get(
   "/",
-  (
+  async (
     req: RequestWithQueryType<GetQueryUserModel>,
     res: Response<UserApiModel[]>,
   ) => {
-    const users = usersRepository.getUsers(req.query.name || null);
+    const users = await usersRepository.getUsers(req.query.name || null);
 
     res.json(users.map(getUserApiModel));
   },
 );
 
+// =========={ GET :id }==========
 usersRouter.get(
   "/:id",
   (
