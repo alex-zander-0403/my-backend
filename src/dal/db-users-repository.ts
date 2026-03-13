@@ -40,8 +40,6 @@ export const usersRepository = {
 
   // =========={ async GET :id }==========
   async getUserById(id: string): Promise<UserType | null> {
-    //
-
     const user = await mongoClient
       .db("users")
       .collection<UserType>("users")
@@ -64,7 +62,11 @@ export const usersRepository = {
       money: newUserData.money || 0,
     };
 
-    _DB.push(newUser);
+    await mongoClient
+      .db("users")
+      .collection<UserType>("users")
+      .insertOne(newUser);
+
     return newUser;
   },
 
