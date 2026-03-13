@@ -4,7 +4,7 @@ import express, {
   type Response,
 } from "express";
 import { body, validationResult } from "express-validator";
-import { usersRepository, type UserType } from "../dal/users-repository.js";
+import { usersRepository, type UserType } from "../dal/db-users-repository.js";
 import type { UserApiModel } from "../models/UserApiModel.js";
 import type { GetQueryUserModel } from "../models/GetQueryUserModel.js";
 import type {
@@ -32,7 +32,7 @@ const getUserApiModel = (user: UserType): UserApiModel => {
 export const usersRouter = express.Router();
 
 // =========={ GET }==========
-// GET /users?name=alex
+// /users?name=alex
 usersRouter.get(
   "/",
   async (
@@ -48,6 +48,7 @@ usersRouter.get(
 );
 
 // =========={ GET :id }==========
+// /users/1
 usersRouter.get(
   "/:id",
   async (

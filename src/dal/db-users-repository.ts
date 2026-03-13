@@ -34,10 +34,14 @@ export const usersRepository = {
   },
 
   // =========={ async GET :id }==========
-  async getUserById(id: string): Promise<UserType | undefined> {
+  async getUserById(id: string): Promise<UserType | null> {
     const foundedUser = DB.find((user) => user.id === Number(id));
 
-    return foundedUser;
+    if (foundedUser) {
+      return foundedUser;
+    } else {
+      return null;
+    }
   },
 
   // =========={ async POST }========== CreateUserModel?
