@@ -75,7 +75,11 @@ export const usersRepository = {
     id: string,
     updateUserData: UpdateUserModel,
   ): Promise<boolean> {
-    let userForUpdate = _DB.find((user) => user.id === Number(id));
+    //
+    let userForUpdate = await mongoClient
+      .db("users")
+      .collection<UserType>("users")
+      .findOne({ id: Number(id) });
 
     // update
     if (userForUpdate) {
@@ -91,6 +95,11 @@ export const usersRepository = {
         userForUpdate.hasCar = updateUserData.hasCar;
       }
 
+      await mongoClient
+        .db("users")
+        .collection<UserType>("users")
+        .updateOne({ id: Number(id) }, { $set: userForUpdate });
+
       return true;
     } else {
       return false;
@@ -99,11 +108,16 @@ export const usersRepository = {
 
   // =========={ async DELETE :id }==========
   async deleteUserById(id: string): Promise<void> {
-    _DB = _DB.filter((user) => user.id !== Number(id));
+    // _DB = _DB.filter((user) => user.id !== Number(id));
+
+    await mongoClient
+      .db("users")
+      .collection("users")
+      .deleteOne({ id: Number(id) });
   },
 
   // =========={ RESET - TEST ROUTE }==========
   testReset() {
-    _DB = [];
+    // _DB = [];
   },
 };
