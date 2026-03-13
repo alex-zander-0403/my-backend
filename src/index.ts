@@ -1,7 +1,15 @@
 import { app } from "./app.js";
+import { runDB } from "./dal/db.js";
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-  console.log(`Сервер запущен! порт = ${port}`);
-});
+//
+async function startApp() {
+  await runDB();
+
+  app.listen(port, () => {
+    console.log(`Сервер запущен! PORT = ${port}`);
+  });
+}
+
+startApp();

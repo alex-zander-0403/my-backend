@@ -1,8 +1,4 @@
-import express, {
-  type Request,
-  type Response,
-  type NextFunction,
-} from "express";
+import express from "express";
 import { usersRouter } from "./routes/usersRouter.js";
 import { testsRouter } from "./routes/testsRouter.js";
 
