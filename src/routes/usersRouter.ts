@@ -5,6 +5,7 @@ import express, {
 } from "express";
 import { body, validationResult } from "express-validator";
 import { usersRepository, type UserType } from "../dal/db-users-repository.js";
+// import { usersRepository, type UserType } from "../dal/array-users-repository.js";
 import type { UserApiModel } from "../models/UserApiModel.js";
 import type { GetQueryUserModel } from "../models/GetQueryUserModel.js";
 import type {

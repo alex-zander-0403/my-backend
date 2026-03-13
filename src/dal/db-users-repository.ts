@@ -1,5 +1,6 @@
 import type { CreateUserModel } from "../models/CreateUserModel.js";
 import type { UpdateUserModel } from "../models/UpdateUserModel.js";
+import { mongoClient } from "./db.js";
 
 export type UserType = {
   id: number;
@@ -10,11 +11,11 @@ export type UserType = {
 };
 
 // аналог бд
-let DB: UserType[] = [
-  { id: 1, name: "Alex", age: 43, hasCar: true, money: 2500 },
-  { id: 2, name: "Bob", age: 45, hasCar: false, money: 130 },
-  { id: 3, name: "Carl", age: 23, hasCar: true, money: 1000 },
-];
+// let _DB: UserType[] = [
+//   { id: 1, name: "Alex", age: 43, hasCar: true, money: 2500 },
+//   { id: 2, name: "Bob", age: 45, hasCar: false, money: 130 },
+//   { id: 3, name: "Carl", age: 23, hasCar: true, money: 1000 },
+// ];
 
 // =======================================================
 
@@ -23,22 +24,31 @@ export const usersRepository = {
   // =========={ async GET }==========
   async getUsers(queryString: string | null): Promise<UserType[]> {
     if (queryString) {
-      const filteredUsers = DB.filter(
-        (user) =>
-          user.name.toLowerCase().indexOf(queryString.toLowerCase()) > -1,
-      );
-      return filteredUsers;
+      return mongoClient
+        .db("users")
+        .collection<UserType>("users")
+        .find({ queryString: { $regex: queryString } })
+        .toArray();
     } else {
-      return DB;
+      return mongoClient
+        .db("users")
+        .collection<UserType>("users")
+        .find({})
+        .toArray();
     }
   },
 
   // =========={ async GET :id }==========
   async getUserById(id: string): Promise<UserType | null> {
-    const foundedUser = DB.find((user) => user.id === Number(id));
+    //
 
-    if (foundedUser) {
-      return foundedUser;
+    const user = await mongoClient
+      .db("users")
+      .collection<UserType>("users")
+      .findOne({ id: Number(id) });
+
+    if (user) {
+      return user;
     } else {
       return null;
     }
@@ -54,7 +64,7 @@ export const usersRepository = {
       money: newUserData.money || 0,
     };
 
-    DB.push(newUser);
+    _DB.push(newUser);
     return newUser;
   },
 
@@ -63,7 +73,7 @@ export const usersRepository = {
     id: string,
     updateUserData: UpdateUserModel,
   ): Promise<boolean> {
-    let userForUpdate = DB.find((user) => user.id === Number(id));
+    let userForUpdate = _DB.find((user) => user.id === Number(id));
 
     // update
     if (userForUpdate) {
@@ -87,11 +97,11 @@ export const usersRepository = {
 
   // =========={ async DELETE :id }==========
   async deleteUserById(id: string): Promise<void> {
-    DB = DB.filter((user) => user.id !== Number(id));
+    _DB = _DB.filter((user) => user.id !== Number(id));
   },
 
   // =========={ RESET - TEST ROUTE }==========
   testReset() {
-    DB = [];
+    _DB = [];
   },
 };

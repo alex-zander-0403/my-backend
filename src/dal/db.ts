@@ -6,7 +6,7 @@ const mongoURI =
   `mongodb+srv://AlexZander0403:mongopassword123@cluster0.xkagbxa.mongodb.net/?appName=Cluster0`;
 
 // создание клиента для mongoBD
-const mongoClient = new MongoClient(mongoURI);
+export const mongoClient = new MongoClient(mongoURI);
 
 // подключение к бд
 export async function runDB() {
