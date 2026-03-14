@@ -4,8 +4,8 @@ import express, {
   type Response,
 } from "express";
 import { body, validationResult } from "express-validator";
-import { usersRepository, type UserType } from "../dal/db-users-repository.js";
-// import { usersRepository, type UserType } from "../dal/array-users-repository.js";
+import { usersService } from "../domain/users-service.js";
+import { type UserType } from "../dal/db-users-repository.js";
 import type { UserApiModel } from "../models/UserApiModel.js";
 import type { GetQueryUserModel } from "../models/GetQueryUserModel.js";
 import type {
@@ -40,7 +40,7 @@ usersRouter.get(
     req: RequestWithQueryType<GetQueryUserModel>,
     res: Response<UserApiModel[]>,
   ) => {
-    const users: UserType[] = await usersRepository.getUsers(
+    const users: UserType[] = await usersService.getUsers(
       req.query.name || null,
     );
 
@@ -56,7 +56,7 @@ usersRouter.get(
     req: RequestWithParamsType<UserUriParamsModel>,
     res: Response<UserApiModel>,
   ) => {
-    const foundedUser = await usersRepository.getUserById(req.params.id);
+    const foundedUser = await usersService.getUserById(req.params.id);
 
     if (!foundedUser) {
       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
@@ -82,7 +82,7 @@ usersRouter.post(
     req: RequestWithBodyType<CreateUserModel>,
     res: Response<UserApiModel>,
   ) => {
-    const newUser: UserType = await usersRepository.createUser(req.body);
+    const newUser: UserType = await usersService.createUser(req.body);
 
     res.status(HTTP_STATUS.CREATED_201).json(getUserApiModel(newUser));
   },
@@ -112,7 +112,7 @@ usersRouter.put(
         .json({ errors: errors.array() });
     }
 
-    const isUserUpdated = await usersRepository.updateUser(
+    const isUserUpdated = await usersService.updateUser(
       req.params.id,
       req.body,
     );
@@ -124,7 +124,7 @@ usersRouter.put(
       return;
     }
 
-    const updatedUser = usersRepository.getUserById(req.params.id);
+    const updatedUser = usersService.getUserById(req.params.id);
 
     res.status(HTTP_STATUS.OK_200).json(updatedUser);
   },
@@ -144,7 +144,7 @@ usersRouter.delete(
       return;
     }
 
-    await usersRepository.deleteUserById(req.params.id);
+    await usersService.deleteUserById(req.params.id);
 
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   },
@@ -152,7 +152,7 @@ usersRouter.delete(
   // =========={ RESET - TEST ROUTE }==========
 
   usersRouter.delete("/reset", (req: Request, res: Response) => {
-    usersRepository.testReset();
+    usersService.testReset();
 
     res.sendStatus(HTTP_STATUS.OK_200);
   }),
