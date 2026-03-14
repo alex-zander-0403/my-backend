@@ -4,8 +4,7 @@ import express, {
   type Response,
 } from "express";
 import { body, validationResult } from "express-validator";
-import { usersService } from "../domain/users-service.js";
-import { type UserType } from "../dal/db-users-repository.js";
+import { usersService } from "../bll/users-service.js";
 import type { UserApiModel } from "../models/UserApiModel.js";
 import type { GetQueryUserModel } from "../models/GetQueryUserModel.js";
 import type {
@@ -20,6 +19,7 @@ import type { CreateUserModel } from "../models/CreateUserModel.js";
 import type { UpdateUserModel } from "../models/UpdateUserModel.js";
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware.js";
 import { nameValidationMiddleware } from "../middlewares/nameValidationMiddleware.js";
+import type { UserType } from "../dal/db.js";
 
 // ============================================================
 

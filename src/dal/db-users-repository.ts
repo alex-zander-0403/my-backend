@@ -18,8 +18,8 @@ export const usersRepository = {
   },
 
   // =========={ async GET :id }==========
-  async getUserById(id: string): Promise<UserType | null> {
-    const user = await usersCollection.findOne({ id: Number(id) });
+  async getUserById(id: number): Promise<UserType | null> {
+    const user = await usersCollection.findOne({ id });
 
     if (user) {
       return user;
@@ -29,58 +29,26 @@ export const usersRepository = {
   },
 
   // =========={ async POST }========== CreateUserModel?
-  async createUser(newUserData: CreateUserModel): Promise<UserType> {
-    const newUser: UserType = {
-      id: Number(new Date()),
-      name: newUserData.name,
-      age: newUserData.age || 0,
-      hasCar: newUserData.hasCar || false,
-      money: newUserData.money || 0,
-    };
-
+  async createUser(newUser: UserType): Promise<UserType> {
     await usersCollection.insertOne(newUser);
 
     return newUser;
   },
 
   // =========={ async UPDATE :id }==========
-  async updateUser(
-    id: string,
-    updateUserData: UpdateUserModel,
-  ): Promise<boolean> {
+  async updateUser(id: number, updatedUser: UpdateUserModel): Promise<boolean> {
     //
-    let userForUpdate = await usersCollection.findOne({ id: Number(id) });
+    const result = await usersCollection.updateOne(
+      { id },
+      { $set: updatedUser },
+    );
 
-    // update
-    if (userForUpdate) {
-      if (updateUserData.name !== undefined) {
-        userForUpdate.name = updateUserData.name;
-      }
-
-      if (updateUserData.age !== undefined) {
-        userForUpdate.age = updateUserData.age;
-      }
-
-      if (updateUserData.hasCar !== undefined) {
-        userForUpdate.hasCar = updateUserData.hasCar;
-      }
-
-      await usersCollection.updateOne(
-        { id: Number(id) },
-        { $set: userForUpdate },
-      );
-
-      return true;
-    } else {
-      return false;
-    }
+    return result.matchedCount === 1;
   },
 
   // =========={ async DELETE :id }==========
-  async deleteUserById(id: string): Promise<void> {
-    // _DB = _DB.filter((user) => user.id !== Number(id));
-
-    await usersCollection.deleteOne({ id: Number(id) });
+  async deleteUserById(id: number): Promise<void> {
+    await usersCollection.deleteOne({ id });
   },
 
   // =========={ RESET - TEST ROUTE }==========
