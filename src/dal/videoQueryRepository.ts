@@ -5,6 +5,11 @@ import {
   VideoType,
 } from "./db.js";
 
+// type UnknownAuthor = {
+//   id: undefined;
+//   name: undefined;
+// };
+
 type VideoOutputModel = {
   id: number;
   title: string;
@@ -17,13 +22,13 @@ type VideoOutputModel = {
 //
 export const videoQueryRepo = {
   // функция mapper
-  _mapDBVideoToVideoOutputModel(dbVideo: VideoType, dbUser: UserType) {
+  _mapDBVideoToVideoOutputModel(dbVideo: VideoType, dbUser: UserType | undefined) {
     return {
       id: dbVideo.id,
       title: dbVideo.title,
       author: {
-        id: dbUser.id,
-        name: dbUser.name,
+        id: dbUser!.id,
+        name: dbUser!.name,
       },
     };
   },
@@ -43,10 +48,12 @@ export const videoQueryRepo = {
   },
 
   // ===================={ GET /:id }====================
-  async getVideoById(id: number): Promise<VideoOutputModel> {
+  async getVideoById(id: number): Promise<VideoOutputModel | string> {
     const dbVideo = await videosCollection.findOne({ id });
     const videoAuthorId = dbVideo!.authorId;
     const authorVideo = await usersCollection.findOne({ videoAuthorId });
+
+    if (!dbVideo || !authorVideo) return "error";
 
     const outputVideo = this._mapDBVideoToVideoOutputModel(
       dbVideo,
