@@ -8,6 +8,12 @@ export type UserType = {
   money: number;
 };
 
+export type VideoType = {
+  id: number;
+  title: string;
+  authorId: number;
+};
+
 // =======================================================
 
 // строка подключения к atlas mongoDB
@@ -19,10 +25,18 @@ const mongoURI =
 // создание клиента для mongoBD
 export const mongoClient = new MongoClient(mongoURI);
 
-// переменная обертка для доступа к бд users
-const usersDB = mongoClient.db("users");
-// переменная обертка для доступа к коллекции в бд
-export const usersCollection = usersDB.collection<UserType>("users");
+// -----------------------------
+
+// переменная обертка для доступа к бд mainDB
+const mainDB = mongoClient.db("mainDB");
+
+// переменная обертка для доступа к коллекции users в бд
+export const usersCollection = mainDB.collection<UserType>("users");
+
+// переменная обертка для доступа к коллекции videos в бд
+export const videosCollection = mainDB.collection<VideoType>("videos");
+
+// -----------------------------
 
 // подключение к бд
 export async function runDB() {
@@ -31,7 +45,7 @@ export async function runDB() {
     await mongoClient.connect();
 
     // пингуем
-    await mongoClient.db("users").command({ ping: 1 });
+    await mongoClient.db("mainDB").command({ ping: 1 });
     console.log("DB ready to work!");
   } catch {
     console.log("Can't connect to DB!");
